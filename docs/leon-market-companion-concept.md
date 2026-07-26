@@ -199,14 +199,19 @@ matters.* Pride wants to be seen but must not *depend* on a reply.
 the voice, and the Fidelity terminal look, ticker strip, and candlesticks all
 have room to breathe. It also makes "never gets lost" easier to guarantee:
 
+Both doors below are **co-equal front doors** — he'll come in through whichever
+he's nearest to. Both land him in the same place.
+
 - **A desktop icon** — a single, large, obvious shortcut sitting on his Windows
   desktop that opens the app **directly, full-screen, with no browser chrome,
   address bar, tabs, or menus** (kiosk-style). No steps, nothing to fumble,
-  nothing he can accidentally click out of. This is the primary path.
-- **Daily email with a link** — arrives each morning as the reminder and the
-  hook (*"one of your picks moved — come see"*). Opens in his browser (AOL
-  webmail is familiar ground) straight into the app. This is the daily *nudge*;
-  the icon is the *foolproof* path if he doesn't go through email.
+  nothing he can accidentally click out of. Always there when he wants to click
+  straight in.
+- **Daily email with a link** — a genuine daily entry point, not just a backup:
+  Leon opens his email **multiple times a day**, so the morning email reliably
+  reaches him where he already is. Warm and simple, with the hook (*"one of your
+  picks moved — come see"*), it opens in his browser (AOL webmail is familiar
+  ground) straight into the app.
 - **Mouse, not touch** — assume he's clicking with a mouse, so targets are large
   and generously spaced for an unsteady hand, and nothing depends on precise
   pointing or dragging. (If it turns out to be a touchscreen PC, even better.)
@@ -217,9 +222,10 @@ have room to breathe. It also makes "never gets lost" easier to guarantee:
 
 ## Open questions to resolve before building
 
-- ~~**Device:** phone, tablet, or PC?~~ **Resolved: PC** — desktop icon
-  (full-screen/kiosk) is the primary path, daily email is the nudge. Still worth
-  confirming: does he open email on his own, or does the icon need to carry it?
+- ~~**Device & access:** phone, tablet, or PC? Email or icon?~~ **Resolved: PC,
+  with both doors.** Desktop icon (full-screen/kiosk) *and* a daily email are
+  co-equal front doors — he opens email multiple times a day, so it reliably
+  reaches him, and the icon is always there to click straight in.
 - **His holdings:** where do they live (brokerage, a spreadsheet), and how do
   they get into the app to start? (v1 can simply be a small config of his real
   names — no live sync needed to prove engagement.)
