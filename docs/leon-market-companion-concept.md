@@ -220,6 +220,33 @@ he's nearest to. Both land him in the same place.
 
 ---
 
+## Data sources
+
+**Chosen sources: Finviz, FMP (Financial Modeling Prep), Alpaca, and Finnhub.
+No Yahoo Finance** — explicitly excluded. This is a personal, non-commercial
+tool for Leon, so these are used for his private use only.
+
+Each has a natural role; together they cover the whole app:
+
+- **FMP (Financial Modeling Prep) — the backbone.** Company profiles and
+  **logos** (for the big, recognizable cards), price quotes for his holdings,
+  and historical daily bars to draw the candlestick charts. Also has
+  gainers/losers/most-active data that can feed "today's movers."
+- **Alpaca — reliable price & bar data.** Clean, app-oriented US equity quotes
+  and historical OHLC bars for the candlesticks and current prices on his
+  holdings. A dependable feed for the numbers he sees.
+- **Finviz — movers & the recognizable market picture.** Drives the "today's
+  movers" scouting segment and the familiar heatmap/screener *look* — the
+  CNBC-ish "here's what's hot right now" feel that says *you're plugged in*.
+- **Finnhub — news & the live tick.** Company and market **news** (the raw
+  material for the plain-English "why did it move" explanations and
+  notable-moment callouts) and a real-time **tick feed** for the scrolling
+  ticker's motion. Fills the gap the price-and-bar sources don't cover.
+
+Exact endpoints and which source is primary vs. fallback for each screen get
+settled at build time. API keys are provided later, wired in with code — never
+pasted into notes or docs.
+
 ## Open questions to resolve before building
 
 - ~~**Device & access:** phone, tablet, or PC? Email or icon?~~ **Resolved: PC,
@@ -229,8 +256,8 @@ he's nearest to. Both land him in the same place.
 - **His holdings:** where do they live (brokerage, a spreadsheet), and how do
   they get into the app to start? (v1 can simply be a small config of his real
   names — no live sync needed to prove engagement.)
-- **Movers source:** which feed defines "today's movers," and how many to show
-  (3 feels right).
+- ~~**Movers source?**~~ **Resolved: Finviz (with FMP as an alternate)** feeds
+  "today's movers." Still to decide: how many to show (3 feels right).
 - **Voice:** browser text-to-speech is easy but can sound cold; a warm voice
   matters a lot here. Worth auditioning options.
 - **Reassurance on red days:** if the real market tanks, do we soften losses
