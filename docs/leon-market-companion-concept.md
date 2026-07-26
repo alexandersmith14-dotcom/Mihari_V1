@@ -195,17 +195,31 @@ matters.* Pride wants to be seen but must not *depend* on a reply.
 
 ## How Leon gets in (access)
 
-- **Daily email with a link** — the primary on-ramp and reminder, arriving each
-  morning with a one-tap button into the app.
-- **A desktop icon** — always sitting on his screen, opens straight into the app
-  with no steps, as the foolproof path (email as the daily nudge/backup).
+**Device: a PC.** This is settled, and it helps — a big screen, PC speakers for
+the voice, and the Fidelity terminal look, ticker strip, and candlesticks all
+have room to breathe. It also makes "never gets lost" easier to guarantee:
+
+- **A desktop icon** — a single, large, obvious shortcut sitting on his Windows
+  desktop that opens the app **directly, full-screen, with no browser chrome,
+  address bar, tabs, or menus** (kiosk-style). No steps, nothing to fumble,
+  nothing he can accidentally click out of. This is the primary path.
+- **Daily email with a link** — arrives each morning as the reminder and the
+  hook (*"one of your picks moved — come see"*). Opens in his browser (AOL
+  webmail is familiar ground) straight into the app. This is the daily *nudge*;
+  the icon is the *foolproof* path if he doesn't go through email.
+- **Mouse, not touch** — assume he's clicking with a mouse, so targets are large
+  and generously spaced for an unsteady hand, and nothing depends on precise
+  pointing or dragging. (If it turns out to be a touchscreen PC, even better.)
+- **Consider auto-launch** — the app could open on its own when the PC starts, so
+  the ritual is simply *there* waiting for him.
 
 ---
 
 ## Open questions to resolve before building
 
-- **Device & tech comfort:** phone, tablet, or a computer he sits at? Can he
-  reliably tap an email link, or is the desktop icon the real primary path?
+- ~~**Device:** phone, tablet, or PC?~~ **Resolved: PC** — desktop icon
+  (full-screen/kiosk) is the primary path, daily email is the nudge. Still worth
+  confirming: does he open email on his own, or does the icon need to carry it?
 - **His holdings:** where do they live (brokerage, a spreadsheet), and how do
   they get into the app to start? (v1 can simply be a small config of his real
   names — no live sync needed to prove engagement.)
