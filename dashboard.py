@@ -1113,7 +1113,7 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
   /* A light shrink: tighter padding and a slightly smaller value number, to buy
      back a little height above the first update without making the tiles cramped
      — the big number stays the headline. */
-  .kpi{padding:10px 12px;border-radius:12px}
+  .kpi{padding:10px 12px;border-radius:12px;text-align:center}
   /* kpi-brk forces all four labels to the same explicit two-line shape (see
      its Python-side comment in kpis()) rather than leaving line count to
      each label's own text length and whatever font the device actually
@@ -1132,7 +1132,7 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      hypothetical). table-cell vertical-align respects normal inline/block
      flow, so the forced break and the space both survive. */
   .kpi .l{margin:-10px -12px 10px;padding:6px 12px;min-height:45px;
-    display:table-cell;vertical-align:middle}
+    display:table-cell;vertical-align:middle;text-align:center}
   .kpi .v{font-size:23px;margin:2px 0 1px}
   .kpi .l,.kpi .n{font-size:11.5px;line-height:1.3}
   /* Short phrasing so no tile note wraps: one wrapped note made the bottom row
