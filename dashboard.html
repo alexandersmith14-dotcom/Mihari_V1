@@ -943,6 +943,14 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      back a little height above the first update without making the tiles cramped
      — the big number stays the headline. */
   .kpi{padding:10px 12px;border-radius:12px;text-align:center}
+  /* .kpi[data-kpi] (the clickable tiles -- non-zero counts, "Open comment
+     periods" and "Effective this quarter" here) carries its own desktop
+     text-align:left for cursor/hover styling, and its higher specificity
+     (class+attribute beats plain class) wins over the .kpi rule above
+     regardless of source order -- only the two clickable tiles stayed
+     left-aligned while the other two centered correctly. Same-specificity
+     override, scoped to mobile. */
+  .kpi[data-kpi]{text-align:center}
   /* kpi-brk forces all four labels to the same explicit two-line shape (see
      its Python-side comment in kpis()) rather than leaving line count to
      each label's own text length and whatever font the device actually
@@ -1180,7 +1188,7 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
          all three items across the row instead of bunching Updated and the
          buttons together on one side. -->
     <span class="krcrumb-updated">Updated
-      August 3, 2026 02:14 UTC</span>
+      August 03, 2026 02:19 UTC</span>
     <!-- Share and install are mobile-first actions, so unlike the old lone
          Export CSV button they stay visible on a phone; see the media query.
          Export CSV moves into the overflow menu — it's still desktop-only,

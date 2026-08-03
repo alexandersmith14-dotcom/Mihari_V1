@@ -1114,6 +1114,14 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      back a little height above the first update without making the tiles cramped
      — the big number stays the headline. */
   .kpi{padding:10px 12px;border-radius:12px;text-align:center}
+  /* .kpi[data-kpi] (the clickable tiles -- non-zero counts, "Open comment
+     periods" and "Effective this quarter" here) carries its own desktop
+     text-align:left for cursor/hover styling, and its higher specificity
+     (class+attribute beats plain class) wins over the .kpi rule above
+     regardless of source order -- only the two clickable tiles stayed
+     left-aligned while the other two centered correctly. Same-specificity
+     override, scoped to mobile. */
+  .kpi[data-kpi]{text-align:center}
   /* kpi-brk forces all four labels to the same explicit two-line shape (see
      its Python-side comment in kpis()) rather than leaving line count to
      each label's own text length and whatever font the device actually
