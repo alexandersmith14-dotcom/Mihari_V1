@@ -1118,21 +1118,20 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      its Python-side comment in kpis()) rather than leaving line count to
      each label's own text length and whatever font the device actually
      renders -- that was producing a real, on-device mismatch (two tiles
-     wrapped, two didn't) that a min-height guess alone couldn't fix
-     reliably. min-height/vertical-align below now matches a guaranteed
-     constant instead of a best-effort estimate. */
+     wrapped, two didn't). Flex broke it (a flex item ignores its own
+     display value, so display:block never forced anything, and the flex
+     spec strips a whitespace-only text run next to another item, eating
+     the space between words on short labels). table-cell fixed that but
+     introduced a different bug: a lone table-cell sizes to its own content
+     width, not the tile's full width, so the navy strip stopped reaching
+     the tile's edges. Plain block needs neither trick: since every label
+     is now guaranteed the same two lines, its natural content height is
+     already equal across all four, so the existing symmetric padding
+     alone centers it vertically -- no min-height, vertical-align, or
+     special display value required, and block's default 100% width keeps
+     the strip spanning the tile like it always did on desktop. */
   .kpi-brk{display:block}
-  /* table-cell, not flex, for the centering -- flex was quietly breaking
-     kpi-brk two different ways at once: a flex item ignores its own
-     display value (so display:block never actually forced the line break),
-     and per the flex spec a whitespace-only text run next to another item
-     gets stripped entirely, which ate the space between words on the two
-     labels short enough not to wrap on their own ("UPDATESTHIS WEEK",
-     "ENFORCEMENTACTIONS" -- both real, both caught on a live render, not
-     hypothetical). table-cell vertical-align respects normal inline/block
-     flow, so the forced break and the space both survive. */
-  .kpi .l{margin:-10px -12px 10px;padding:6px 12px;min-height:45px;
-    display:table-cell;vertical-align:middle;text-align:center}
+  .kpi .l{margin:-10px -12px 10px;padding:6px 12px;text-align:center}
   .kpi .v{font-size:23px;margin:2px 0 1px}
   .kpi .l,.kpi .n{font-size:11.5px;line-height:1.3}
   /* Short phrasing so no tile note wraps: one wrapped note made the bottom row
