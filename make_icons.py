@@ -3,41 +3,42 @@
 Run after changing the branding, same as make_og_image.py. Output is committed
 so the published page can reference it.
 
-The design deliberately echoes og-image.png: navy field, white mark, green
-rule along the bottom. Someone who saw the LinkedIn card should recognise the
-tab icon as the same thing.
+v2, 2026-08-03: switched from a navy field with the Check Spike mark to a
+white field with a bold navy monogram, at Alexander's request to read as
+closer to Kaufman Rossin's own installed-app icon style (white circle, bold
+navy letters) rather than a dark navy square. Keeps the product's own
+identity rather than adopting KR's literal "K|R" mark: the monogram is
+derived from PRODUCT_NAME below, so it says "M" here and "C" on ClearReg's
+own copy of this file without any other change needed. A small lime dot at
+the letter's upper-right is the one remaining nod to Check Spike's own
+dot-at-the-peak motif, so the icon doesn't read as a total break from
+everything else in the identity — just the one navy-square, white-mark
+element flipped to match KR's lighter style.
 
-The mark is Check Spike — a checkmark that keeps going into the same
-flat-then-peak spike shape used across the rest of the identity ("flat until
-it isn't"), rendered as plain line segments rather than a font glyph so it
-matches the SVG mark in the page header exactly.
-
-The green rule is a proportion of the icon (10%) rather than a fixed pixel
-height, the same reasoning as before: at 16px a fixed 14px rule (this card's
-proportion) would be sub-pixel and vanish.
+The green rule stays a proportion of the icon (10%) rather than a fixed
+pixel height: at 16px a fixed 14px rule (this card's proportion) would be
+sub-pixel and vanish.
 """
 import json
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
+
+PRODUCT_NAME = "Mihari"
+MONOGRAM = PRODUCT_NAME[0].upper()
 
 NAVY = (0, 59, 106)
 GREEN = (174, 209, 54)
 WHITE = (255, 255, 255)
 
 RULE_FRACTION = 0.10      # green bar height, as a share of the icon
-CAP_FRACTION = 0.66       # target height of the mark, as a share of the field
-
-# Check Spike, in its native 64-unit coordinate space (same path as the SVG
-# mark in dashboard.html's .pagehead and the regwatch-logomark artifact).
-GLYPH_PTS = [(10, 34), (22, 46), (40, 18), (46, 18), (50, 10), (54, 18), (60, 18)]
-DOT_PT, DOT_R_SRC = (50, 10), 4.0
-SRC_X0, SRC_X1 = 10, 60
-SRC_Y0, SRC_Y1 = 10, 46
+CAP_FRACTION = 0.62       # target height of the letter, as a share of the field
+FONT_PATH = "C:/Windows/Fonts/arialbd.ttf"
+DOT_R_FRACTION = 0.05     # accent dot radius, as a share of the field
 
 
 def render(size, padding=0.0):
     """One icon. `padding` insets the artwork for maskable (croppable) icons."""
-    img = Image.new("RGB", (size, size), NAVY)
+    img = Image.new("RGB", (size, size), WHITE)
     d = ImageDraw.Draw(img)
 
     inset = round(size * padding)
@@ -48,27 +49,36 @@ def render(size, padding=0.0):
 
     field_top, field_bottom = inset, size - inset - rule
     field_h = field_bottom - field_top
-    src_w, src_h = SRC_X1 - SRC_X0, SRC_Y1 - SRC_Y0
 
-    scale = (field_h * CAP_FRACTION) / src_h
-    glyph_w, glyph_h = src_w * scale, src_h * scale
-    ox = inset + (inner - glyph_w) / 2 - SRC_X0 * scale
-    oy = field_top + (field_h - glyph_h) / 2 - SRC_Y0 * scale
+    # Binary-search the largest font size whose rendered glyph height fits
+    # CAP_FRACTION of the field -- textbbox gives the real ink height for
+    # this exact font, not a guessed cap-height ratio, so it holds at every
+    # icon size from 16px up to 512px without a separate tuned constant per
+    # size.
+    target_h = field_h * CAP_FRACTION
+    lo, hi = 1, size * 2
+    font = None
+    bbox = (0, 0, 0, 0)
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        f = ImageFont.truetype(FONT_PATH, mid)
+        bbox = d.textbbox((0, 0), MONOGRAM, font=f)
+        h = bbox[3] - bbox[1]
+        if h <= target_h:
+            font, lo = f, mid + 1
+        else:
+            hi = mid - 1
+    text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    tx = inset + (inner - text_w) / 2 - bbox[0]
+    ty = field_top + (field_h - text_h) / 2 - bbox[1]
+    d.text((tx, ty), MONOGRAM, font=font, fill=NAVY)
 
-    def to_px(p):
-        return (ox + p[0] * scale, oy + p[1] * scale)
-
-    pts = [to_px(p) for p in GLYPH_PTS]
-    stroke_w = max(1, round(scale * 4.4))
-    d.line(pts, fill=WHITE, width=stroke_w, joint="curve")
-    # line() doesn't round the end caps the way the SVG's stroke-linecap does;
-    # a filled circle at every vertex (including both ends) approximates it.
-    r = stroke_w / 2
-    for p in pts:
-        d.ellipse([p[0] - r, p[1] - r, p[0] + r, p[1] + r], fill=WHITE)
-
-    dx, dy = to_px(DOT_PT)
-    dr = DOT_R_SRC * scale
+    # Small lime accent dot at the letter's upper-right corner -- the one
+    # carried-over nod to Check Spike's own dot-at-the-peak motif, so this
+    # doesn't read as a total break from the rest of the identity.
+    dr = inner * DOT_R_FRACTION
+    dx = tx + text_w - dr * 1.6
+    dy = ty + dr * 1.1
     d.ellipse([dx - dr, dy - dr, dx + dr, dy + dr], fill=GREEN)
     return img
 
@@ -97,7 +107,7 @@ def main():
 
     manifest = {
         "name": "Regulatory update tracker — community banks & fintechs",
-        "short_name": "Mihari",
+        "short_name": PRODUCT_NAME,
         "description": "Daily federal regulatory updates for community banks and "
                        "fintechs, in plain English.",
         # Relative, because the site is served from a /regwatch/ subpath rather
@@ -105,7 +115,11 @@ def main():
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
-        "background_color": "#003b6a",
+        # White now, matching the icon's new field colour (this is the
+        # splash-screen colour a PWA launch briefly shows). theme_color stays
+        # navy since that's the app's real in-use browser-chrome colour and
+        # hasn't changed, only the icon graphic has.
+        "background_color": "#ffffff",
         "theme_color": "#003b6a",
         "icons": [
             {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
