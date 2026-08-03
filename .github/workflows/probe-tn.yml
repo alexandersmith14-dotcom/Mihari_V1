@@ -1,0 +1,26 @@
+name: Probe tn.gov reachability (throwaway diagnostic)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test TDFI reachability from the CI network
+        run: |
+          python3 -c "
+          import urllib.request
+          urls = [
+              'https://www.tn.gov/',
+              'https://www.tn.gov/tdfi.html',
+              'https://www.tn.gov/tdfi/enforcement-actions.html',
+          ]
+          for url in urls:
+              req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+              try:
+                  r = urllib.request.urlopen(req, timeout=20)
+                  print(url, '->', r.status, len(r.read()), 'bytes')
+              except Exception as e:
+                  print(url, '-> ERR', type(e).__name__, e)
+          "
