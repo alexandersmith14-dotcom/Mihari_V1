@@ -2111,6 +2111,17 @@ function initQuickStart() {
     qsText.textContent = s.text;
     qsBtn.textContent = hasMore ? 'Next' : 'Got it';
     qs.hidden = false;
+    // Scroll the next target into view on advance -- later steps (filters,
+    // search, the deadline/update actions) can sit well below the fold, and
+    // without this the callout just repositions itself onto a spot the
+    // reader has to go hunting for. Skipped when already fully visible so
+    // step 1 (up near the top already) doesn't jump for no reason. The
+    // existing scroll listener keeps the callout tracking the target for
+    // the rest of the smooth-scroll animation.
+    const r = target.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     place(target);
   }
   function finish() {
