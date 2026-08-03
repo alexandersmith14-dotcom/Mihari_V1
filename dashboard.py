@@ -419,7 +419,14 @@ h1.wordmark svg{width:.85em;height:.72em;margin-bottom:.08em;flex:none}
 .hero-pipe{color:var(--accent);font-weight:400}
 .hero-copy{font-size:19px;line-height:1.55;font-weight:600;color:#fff;margin:0}
 @media (max-width:820px){
-  .hero-inner{grid-template-columns:1fr;padding:48px 20px}
+  /* padding/gap tightened well below the desktop values (44px/44px) rather
+     than inheriting them, let alone the old 48px override -- stacking to a
+     single column already adds height the side-by-side desktop layout
+     never has (title block + copy now stack instead of sharing one row),
+     and the desktop gap value was doing double duty as horizontal spacing
+     there; unchanged, it becomes 44px of pure vertical dead air between
+     the stacked blocks on a phone. */
+  .hero-inner{grid-template-columns:1fr;padding:28px 20px;gap:16px}
   .hero-divider{display:none}
   .hero-bgmark svg{width:340px;height:auto}
 }
@@ -1072,6 +1079,16 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      useful here than on desktop. The More button only ever held Export CSV,
      which isn't offered on a phone, so there's nothing left for it to open. */
   .icon-btn-wrap{display:none}
+  /* Was wrapping to its own left-aligned line below the breadcrumb path --
+     the row only has width for path + one more item, and "Updated
+     [full date/time]" was winning that slot over the icons every time.
+     Dropping the timestamp here (it's not essential on a phone; the freshest
+     regulatory data is still one tap away via any update's own date) lets
+     path + icon-toolbar share the single row that justify-content:
+     space-between on .krcrumbwrap already wants to give them -- landing the
+     icons in the upper-right corner, same relative position as desktop,
+     instead of a disconnected-looking second row. */
+  .krcrumb-updated{display:none}
   /* Stays at readable body size on purpose — see the .notice comment above; a
      public tool cannot put its caveats in the footer. Only the padding and the
      leading tighten here, and the deadline explanation moved into the coverage
@@ -1094,7 +1111,14 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      back a little height above the first update without making the tiles cramped
      — the big number stays the headline. */
   .kpi{padding:10px 12px;border-radius:12px}
-  .kpi .l{margin:-10px -12px 10px;padding:6px 12px}
+  /* min-height reserves 2 lines' worth of space even for one-line labels
+     ("Updates this week" fits on one line, "Open comment periods" wraps to
+     two) -- without it, the big number below sat at a different vertical
+     offset in every tile depending on its own label's line count, so two
+     numbers side by side in the same grid row didn't align, reading as
+     mismatched tiles even though the tiles themselves were the same height. */
+  .kpi .l{margin:-10px -12px 10px;padding:6px 12px;min-height:45px;
+    display:flex;align-items:center}
   .kpi .v{font-size:23px;margin:2px 0 1px}
   .kpi .l,.kpi .n{font-size:11.5px;line-height:1.3}
   /* Short phrasing so no tile note wraps: one wrapped note made the bottom row
