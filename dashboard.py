@@ -1188,6 +1188,22 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      tappable. A full 44px here would grow every deadline row instead. */
   .dl .cal,.cardfoot .cal{min-height:34px;padding:0 10px;border-color:var(--border)}
   .itembtn{width:34px;height:34px;border-color:var(--border)}
+  /* The real cause, found by measuring actual rendered rects rather than
+     guessing: .dlfoot is flex with no flex-basis set on either child, so
+     .actions (the icon group) was getting SHRUNK to whatever width was left
+     over after .when's date text, not its own natural content width -- and
+     that leftover width came in under what cal+notes+tasks actually need by
+     less than a pixel, so the icon group wrapped internally (calendar alone
+     on row 1, notes+tasks together on row 2) even though the icons
+     themselves had room if given priority. flex-shrink:0 makes .actions
+     keep its full natural width always; .when's date text already wraps to
+     two lines cleanly (see its own multi-line date+day-count text), so it's
+     the one that should absorb width pressure, not the icon group. The gap
+     trims below still help -- less width for .actions to demand in the
+     first place -- but weren't the actual fix on their own. */
+  .dl .actions{gap:2px;flex-shrink:0}
+  .dl .itemrow{gap:1px}
+  .dl .cal{padding:0 7px}
   .quickcontact .qc-icons a{width:36px;height:36px}
   .card h3{line-height:1.45}
   .card h3 a{display:inline-block;padding:2px 0}
