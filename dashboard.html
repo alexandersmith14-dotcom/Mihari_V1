@@ -254,14 +254,14 @@ h1.wordmark svg{width:.85em;height:.72em;margin-bottom:.08em;flex:none}
      never has (title block + copy now stack instead of sharing one row),
      and the desktop gap value was doing double duty as horizontal spacing
      there; unchanged, it becomes 44px of pure vertical dead air between
-     the stacked blocks on a phone. Bottom padding trimmed further than top
-     (10px vs 28px) -- two rounds of real-device photos showed dead navy
-     space below the copy paragraph before the hero ends; top padding stays
-     since it reads fine against the breadcrumb bar above. herowrap's own
-     margin-bottom also cut (14px to 6px) since that stacked with .wrap's
-     mobile padding-top to widen the white gap before the "Read this
-     first" notice card. */
-  .hero-inner{grid-template-columns:1fr;padding:28px 20px 10px;gap:12px}
+     the stacked blocks on a phone. Top/bottom padding evened out to 20px/14px
+     -- an earlier pass cut bottom to 10px while leaving top at 28px, which
+     traded the dead-space problem for a lopsided top-heavy look on a real
+     device; this keeps both ends trim without either one reading as
+     bigger than the other. herowrap's own margin-bottom also cut (14px to
+     6px) since that stacked with .wrap's mobile padding-top to widen the
+     white gap before the "Read this first" notice card. */
+  .hero-inner{grid-template-columns:1fr;padding:20px 20px 14px;gap:12px}
   .hero-divider{display:none}
   .hero-bgmark svg{width:340px;height:auto}
   .herowrap{margin-bottom:6px}
@@ -1197,7 +1197,7 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
          all three items across the row instead of bunching Updated and the
          buttons together on one side. -->
     <span class="krcrumb-updated">Updated
-      August 3, 2026 09:14 UTC</span>
+      August 03, 2026 09:18 UTC</span>
     <!-- Share and install are mobile-first actions, so unlike the old lone
          Export CSV button they stay visible on a phone; see the media query.
          Export CSV moves into the overflow menu — it's still desktop-only,
