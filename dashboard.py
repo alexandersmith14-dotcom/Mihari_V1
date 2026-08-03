@@ -679,6 +679,9 @@ header.krheader{animation-delay:.08s}
 .kpi .n.up{color:var(--crit)} .kpi .n.down{color:var(--ok)}
 /* Long/short phrasings of a tile note; the phone block swaps them. */
 .kpi .n-short{display:none}
+/* Inert on desktop -- see kpi-brk's Python-side comment in kpis() for why
+   this exists instead of trusting the browser to wrap consistently. */
+.kpi-brk{display:none}
 /* Clickable tiles (those with a non-zero count) filter the list on click. The
    hover lift is the same shadow shape scaled up (--shadow-md), not a
    different effect, so it reads as the same tile rising rather than
@@ -1111,14 +1114,25 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      back a little height above the first update without making the tiles cramped
      — the big number stays the headline. */
   .kpi{padding:10px 12px;border-radius:12px}
-  /* min-height reserves 2 lines' worth of space even for one-line labels
-     ("Updates this week" fits on one line, "Open comment periods" wraps to
-     two) -- without it, the big number below sat at a different vertical
-     offset in every tile depending on its own label's line count, so two
-     numbers side by side in the same grid row didn't align, reading as
-     mismatched tiles even though the tiles themselves were the same height. */
+  /* kpi-brk forces all four labels to the same explicit two-line shape (see
+     its Python-side comment in kpis()) rather than leaving line count to
+     each label's own text length and whatever font the device actually
+     renders -- that was producing a real, on-device mismatch (two tiles
+     wrapped, two didn't) that a min-height guess alone couldn't fix
+     reliably. min-height/vertical-align below now matches a guaranteed
+     constant instead of a best-effort estimate. */
+  .kpi-brk{display:block}
+  /* table-cell, not flex, for the centering -- flex was quietly breaking
+     kpi-brk two different ways at once: a flex item ignores its own
+     display value (so display:block never actually forced the line break),
+     and per the flex spec a whitespace-only text run next to another item
+     gets stripped entirely, which ate the space between words on the two
+     labels short enough not to wrap on their own ("UPDATESTHIS WEEK",
+     "ENFORCEMENTACTIONS" -- both real, both caught on a live render, not
+     hypothetical). table-cell vertical-align respects normal inline/block
+     flow, so the forced break and the space both survive. */
   .kpi .l{margin:-10px -12px 10px;padding:6px 12px;min-height:45px;
-    display:flex;align-items:center}
+    display:table-cell;vertical-align:middle}
   .kpi .v{font-size:23px;margin:2px 0 1px}
   .kpi .l,.kpi .n{font-size:11.5px;line-height:1.3}
   /* Short phrasing so no tile note wraps: one wrapped note made the bottom row
@@ -2348,16 +2362,25 @@ def kpis(rows, today):
     dn = "up" if delta > 0 else "down" if delta < 0 else ""
     dtxt = f"{'+' if delta > 0 else ''}{delta} vs last week" if delta else "same as last week"
     # (label, value, note, delta-class, tile key)
+    # kpi-brk is an empty span, invisible and inert on desktop, that becomes
+    # display:block at phone width -- a deliberate, explicit break point
+    # rather than leaving it to the browser's own text-wrap, which depends
+    # on the exact font actually loaded on the device and rendered
+    # inconsistently between this build environment and a real phone (two
+    # of four labels wrapped on-device here, none did in local testing).
+    # Forcing all four to the same two-line shape sidesteps that mismatch
+    # entirely instead of chasing it font by font.
+    brk = '<span class="kpi-brk"></span>'
     return [
-        ("Updates this week", this_wk, dtxt, dn, "week"),
-        ("Open comment periods", count("comments"), f"{soon} closing within 30 days", "", "comments"),
-        ("Enforcement actions", count("enforcement"), "This month", "", "enforcement"),
+        ("Updates " + brk + "this week", this_wk, dtxt, dn, "week"),
+        ("Open comment " + brk + "periods", count("comments"), f"{soon} closing within 30 days", "", "comments"),
+        ("Enforcement " + brk + "actions", count("enforcement"), "This month", "", "enforcement"),
         # Two phrasings of one fact. At phone width the long form wraps to a
         # second line, which makes the whole bottom row 16px taller and leaves
         # the Enforcement tile beside it visibly empty — grid rows match heights,
         # so one wrapping note dents the tile next to it. Both are built from the
         # same q_end, so they cannot drift; CSS picks which is shown.
-        ("Effective this quarter", count("effective"),
+        ("Effective " + brk + "this quarter", count("effective"),
          f'<span class="n-long">Rules taking effect by {q_end.strftime("%b %Y")}</span>'
          f'<span class="n-short">By {q_end.strftime("%b %Y")}</span>', "", "effective"),
     ]
