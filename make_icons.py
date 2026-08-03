@@ -3,21 +3,16 @@
 Run after changing the branding, same as make_og_image.py. Output is committed
 so the published page can reference it.
 
-v2, 2026-08-03: switched from a navy field with the Check Spike mark to a
-white field with a bold navy monogram, at Alexander's request to read as
-closer to Kaufman Rossin's own installed-app icon style (white circle, bold
-navy letters) rather than a dark navy square. Keeps the product's own
-identity rather than adopting KR's literal "K|R" mark: the monogram is
-derived from PRODUCT_NAME below, so it says "M" here and "C" on ClearReg's
-own copy of this file without any other change needed. A small lime dot at
-the letter's upper-right is the one remaining nod to Check Spike's own
-dot-at-the-peak motif, so the icon doesn't read as a total break from
-everything else in the identity — just the one navy-square, white-mark
-element flipped to match KR's lighter style.
-
-The green rule stays a proportion of the icon (10%) rather than a fixed
-pixel height: at 16px a fixed 14px rule (this card's proportion) would be
-sub-pixel and vanish.
+v3, 2026-08-03: matched against a real photo of Kaufman Rossin's own
+installed-app icon (kr.png): a soft gray rounded field, bold navy letters,
+split by a thin lime pipe -- no bottom rule bar, no corner dot, which the
+prior version (white field) had invented and KR's own icon doesn't use.
+KR's icon splits two letters (K|R, one per word of the firm name); a single
+product name has no second word to split, so the pipe now sits to the
+right of the monogram instead, echoing the same "letter, pipe, letter"
+shape without inventing a second initial. Same PRODUCT_NAME-driven
+monogram as v2, so this file is identical for Mihari ("M") and ClearReg
+("C") except for that one constant.
 """
 import json
 
@@ -28,34 +23,29 @@ MONOGRAM = PRODUCT_NAME[0].upper()
 
 NAVY = (0, 59, 106)
 GREEN = (174, 209, 54)
-WHITE = (255, 255, 255)
+FIELD_GRAY = (225, 227, 230)   # matches the soft gray field in KR's own icon
 
-RULE_FRACTION = 0.10      # green bar height, as a share of the icon
-CAP_FRACTION = 0.62       # target height of the letter, as a share of the field
+CAP_FRACTION = 0.56       # target height of the letter, as a share of the field
 FONT_PATH = "C:/Windows/Fonts/arialbd.ttf"
-DOT_R_FRACTION = 0.05     # accent dot radius, as a share of the field
+PIPE_W_FRACTION = 0.045   # pipe stroke width, as a share of the field
+PIPE_H_FRACTION = 0.85    # pipe height, as a share of the letter's own height
+PIPE_GAP_FRACTION = 0.22  # gap between letter and pipe, as a share of letter height
 
 
 def render(size, padding=0.0):
     """One icon. `padding` insets the artwork for maskable (croppable) icons."""
-    img = Image.new("RGB", (size, size), WHITE)
+    img = Image.new("RGB", (size, size), FIELD_GRAY)
     d = ImageDraw.Draw(img)
 
     inset = round(size * padding)
     inner = size - 2 * inset
-
-    rule = max(1, round(inner * RULE_FRACTION))
-    d.rectangle([inset, size - inset - rule, size - inset, size - inset - 1], fill=GREEN)
-
-    field_top, field_bottom = inset, size - inset - rule
-    field_h = field_bottom - field_top
 
     # Binary-search the largest font size whose rendered glyph height fits
     # CAP_FRACTION of the field -- textbbox gives the real ink height for
     # this exact font, not a guessed cap-height ratio, so it holds at every
     # icon size from 16px up to 512px without a separate tuned constant per
     # size.
-    target_h = field_h * CAP_FRACTION
+    target_h = inner * CAP_FRACTION
     lo, hi = 1, size * 2
     font = None
     bbox = (0, 0, 0, 0)
@@ -69,17 +59,21 @@ def render(size, padding=0.0):
         else:
             hi = mid - 1
     text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
-    tx = inset + (inner - text_w) / 2 - bbox[0]
-    ty = field_top + (field_h - text_h) / 2 - bbox[1]
+
+    pipe_w = max(1, round(inner * PIPE_W_FRACTION))
+    pipe_h = text_h * PIPE_H_FRACTION
+    gap = text_h * PIPE_GAP_FRACTION
+    group_w = text_w + gap + pipe_w
+
+    gx = inset + (inner - group_w) / 2
+    gy = inset + (inner - text_h) / 2
+    tx = gx - bbox[0]
+    ty = gy - bbox[1]
     d.text((tx, ty), MONOGRAM, font=font, fill=NAVY)
 
-    # Small lime accent dot at the letter's upper-right corner -- the one
-    # carried-over nod to Check Spike's own dot-at-the-peak motif, so this
-    # doesn't read as a total break from the rest of the identity.
-    dr = inner * DOT_R_FRACTION
-    dx = tx + text_w - dr * 1.6
-    dy = ty + dr * 1.1
-    d.ellipse([dx - dr, dy - dr, dx + dr, dy + dr], fill=GREEN)
+    px0 = gx + text_w + gap
+    py0 = gy + (text_h - pipe_h) / 2
+    d.rectangle([px0, py0, px0 + pipe_w, py0 + pipe_h], fill=GREEN)
     return img
 
 
@@ -115,11 +109,11 @@ def main():
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
-        # White now, matching the icon's new field colour (this is the
-        # splash-screen colour a PWA launch briefly shows). theme_color stays
-        # navy since that's the app's real in-use browser-chrome colour and
-        # hasn't changed, only the icon graphic has.
-        "background_color": "#ffffff",
+        # Matches the icon's gray field colour (this is the splash-screen
+        # colour a PWA launch briefly shows). theme_color stays navy since
+        # that's the app's real in-use browser-chrome colour, unrelated to
+        # the icon graphic.
+        "background_color": "#e1e3e6",
         "theme_color": "#003b6a",
         "icons": [
             {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
