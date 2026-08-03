@@ -21,6 +21,14 @@ from PIL import Image, ImageDraw, ImageFont
 PRODUCT_NAME = "Mihari"
 MONOGRAM = PRODUCT_NAME[0].upper()
 
+# Bump alongside the matching ?v= in dashboard.py's <link> tags whenever the
+# icon artwork changes -- Android's "Install app" flow mints a WebAPK via a
+# Google server that caches the icon server-side once fetched, so a plain
+# redeploy isn't enough to make it refetch. The manifest's own icon srcs need
+# the same cache-buster, not just the HTML <link> tags, since the WebAPK
+# minting service reads icon paths from the manifest.
+ICON_VERSION = 3
+
 NAVY = (0, 59, 106)
 GREEN = (174, 209, 54)
 FIELD_GRAY = (225, 227, 230)   # matches the soft gray field in KR's own icon
@@ -116,9 +124,9 @@ def main():
         "background_color": "#e1e3e6",
         "theme_color": "#003b6a",
         "icons": [
-            {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-            {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
-            {"src": "icon-maskable-512.png", "sizes": "512x512",
+            {"src": f"icon-192.png?v={ICON_VERSION}", "sizes": "192x192", "type": "image/png"},
+            {"src": f"icon-512.png?v={ICON_VERSION}", "sizes": "512x512", "type": "image/png"},
+            {"src": f"icon-maskable-512.png?v={ICON_VERSION}", "sizes": "512x512",
              "type": "image/png", "purpose": "maskable"},
         ],
     }
