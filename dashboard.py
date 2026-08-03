@@ -1056,7 +1056,13 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
   .krheaderwrap .krlogo{width:140px}
   .krheader-toprow{display:none}
   .krheader nav{display:none}
-  .krcrumb{display:none}
+  /* NOT display:none -- the Share/Install icon buttons live inside .krcrumb
+     (see the HTML comment above .icon-toolbar) and were meant to stay
+     visible on a phone per that same comment ("mobile-first actions"). A
+     blanket hide here silently took them out along with the rest of the
+     row -- the #export/.icon-btn-wrap rules below already handle trimming
+     the row down to just breadcrumb + Share + Install, they don't need the
+     whole band gone first. */
   .pagehead{gap:18px;margin-bottom:14px;padding-bottom:14px;
     flex-direction:column;align-items:flex-start}
   h1{font-size:22px;line-height:1.2;margin:0 0 4px}
@@ -1072,8 +1078,18 @@ footer.sitefoot{margin-top:22px;background:var(--brand-bg)}
      panel. The caveat itself is not shrunk to get the height down. */
   .notice{padding:12px 13px;font-size:13px;line-height:1.45;margin-bottom:14px}
 
-  /* Two-up instead of stacked: four numbers in half the height. */
-  .kpis{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  /* Two-up instead of stacked: four numbers in half the height. Row height
+     must size to content (auto), not the desktop 1fr -- with the desktop
+     value still active here, the grid forced every tile in a row to the
+     same fixed height and .kpi's overflow:hidden clipped any label that
+     needed a 3rd wrapped line mid-word ("UPDAT", "COMM PERIO"). The agency
+     panel also needs its own explicit grid-column reset: without it, its
+     desktop-only grid-column:3 placement (below) still applies here and
+     grid auto-creates an implicit 3rd column to satisfy it, squeezing the
+     two real 1fr columns down to whatever width is left over -- which is
+     the second half of the same bug, not a separate one. */
+  .kpis{grid-template-columns:1fr 1fr;grid-auto-rows:auto;gap:8px;margin-bottom:14px}
+  .kpis .p-agencies{grid-column:1 / -1;grid-row:auto}
   /* A light shrink: tighter padding and a slightly smaller value number, to buy
      back a little height above the first update without making the tiles cramped
      — the big number stays the headline. */
