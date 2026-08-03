@@ -2073,6 +2073,9 @@ const QS_STEPS = [
     text: 'Every update has three quick actions: add a deadline to your calendar, jot a private note, or track a task — right from the list.' },
 ];
 function initQuickStart() {
+  // ?quickstart=1 replays the tour on demand -- lets it be checked on a real
+  // phone without digging into dev tools to clear localStorage by hand.
+  if (/[?&]quickstart=1(&|$)/.test(location.search)) localStorage.removeItem(QS_KEY);
   if (localStorage.getItem(QS_KEY)) return;
   const qs = $('#quickstart');
   const qsText = qs && qs.querySelector('p');
